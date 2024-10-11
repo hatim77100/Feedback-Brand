@@ -1,25 +1,26 @@
-import { TriangleUpIcon } from "@radix-ui/react-icons";
+import { useEffect, useState } from "react";
+import FeedbackItem from "./FeedbackItem";
 
 export default function FeedbackList() {
+  const [feedbackItems, setFeedbackItems] = useState([]);
+
+  useEffect(() => {
+    fetch(
+      "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks"
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setFeedbackItems(data.feedbacks);
+      });
+  }, []);
+
   return (
     <ol className="feedback-list">
-      <li className="feedback">
-        <button>
-          <TriangleUpIcon />
-          <span>580</span>
-        </button>
-        <div>
-          <p>B</p>
-        </div>
-        <div>
-          <p>ByteHat</p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos
-            architecto amet, sed nulla voluptas cumque?
-          </p>
-        </div>
-        <p>4d</p>
-      </li>
+      {feedbackItems.map((feedbackItem, index) => (
+        <FeedbackItem feedbackItem={feedbackItem} key={index} />
+      ))}
     </ol>
   );
 }
