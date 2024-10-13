@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { TFeedbackItem } from "../lib/types";
+import HashtagList from "./hashtag/HashtagList";
 import Container from "./layout/Container";
 import Footer from "./layout/Footer";
-import HashtagList from "./hashtag/HashtagList";
-import { TFeedbackItem } from "../lib/types";
 
 function App() {
   const [feedbackItems, setFeedbackItems] = useState<TFeedbackItem[]>([]);
@@ -10,17 +10,25 @@ function App() {
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedCompany, setSelectedCompany] = useState("");
 
-  const filterFeedbackItems = selectedCompany
-    ? feedbackItems.filter(
-        (feedbackItem) => feedbackItem.company === selectedCompany
-      )
-    : feedbackItems;
+  const filterFeedbackItems = useMemo(
+    () =>
+      selectedCompany
+        ? feedbackItems.filter(
+            (feedbackItem) => feedbackItem.company === selectedCompany
+          )
+        : feedbackItems,
+    [selectedCompany, feedbackItems]
+  );
 
-  const companyList = feedbackItems
-    .map((item) => item.company)
-    .filter((company, index, array) => {
-      return array.indexOf(company) === index;
-    });
+  const companyList = useMemo(
+    () =>
+      feedbackItems
+        .map((item) => item.company)
+        .filter((company, index, array) => {
+          return array.indexOf(company) === index;
+        }),
+    [feedbackItems]
+  );
 
   const handeAddToList = async (text: string) => {
     const newItem: TFeedbackItem = {
