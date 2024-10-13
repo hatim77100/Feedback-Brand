@@ -9,13 +9,13 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handeAddToList = (text: string) => {
+  const handeAddToList = async (text: string) => {
     const newItem: TFeedbackItem = {
       id: new Date().getTime(),
       text: text,
       upvoteCount: 0,
       daysAgo: 0,
-      companyName: text
+      company: text
         .split(" ")
         .find((word: string) => word.includes("#"))!
         .substring(1),
@@ -26,7 +26,20 @@ function App() {
         .substring(0, 1)
         .toUpperCase(),
     };
+
     setFeedbackItems([...feedbackItems, newItem]);
+
+    await fetch(
+      "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks",
+      {
+        method: "POST",
+        body: JSON.stringify(newItem),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
   };
 
   const fetchData = async () => {
