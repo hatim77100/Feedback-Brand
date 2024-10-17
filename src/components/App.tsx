@@ -3,7 +3,6 @@ import { TFeedbackItem } from "../lib/types";
 import HashtagList from "./hashtag/HashtagList";
 import Container from "./layout/Container";
 import Footer from "./layout/Footer";
-import HashtagItem from "./hashtag/HashtagItem";
 
 function App() {
   const [feedbackItems, setFeedbackItems] = useState<TFeedbackItem[]>([]);
@@ -116,14 +115,10 @@ function App() {
         errorMessage={errorMessage}
         handeAddToList={handeAddToList}
       />
-      <HashtagList>
-        {companyList.map((company) => (
-          <HashtagItem
-            onSelectCompany={handleSelectCompany}
-            company={company}
-          />
-        ))}
-      </HashtagList>
+      <HashtagList
+        companyList={companyList}
+        handleSelectCompany={handleSelectCompany}
+      />
     </div>
   );
 }
