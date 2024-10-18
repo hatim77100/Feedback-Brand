@@ -1,5 +1,6 @@
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 import { TFeedbackItem } from "../../lib/types";
+import { useFeedbackItems } from "../../lib/hooks";
 
 type FeedbackItemsContextProviderProps = {
   children: React.ReactNode;
@@ -21,9 +22,8 @@ export const FeedbackItemsContext = createContext<TFeedbackItemsContext | null>(
 export default function FeedbackItemsContextProvider({
   children,
 }: FeedbackItemsContextProviderProps) {
-  const [feedbackItems, setFeedbackItems] = useState<TFeedbackItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const { feedbackItems, errorMessage, isLoading, setFeedbackItems } =
+    useFeedbackItems();
   const [selectedCompany, setSelectedCompany] = useState("");
 
   const companyList = useMemo(
@@ -35,23 +35,6 @@ export default function FeedbackItemsContextProvider({
         }),
     [feedbackItems]
   );
-
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch(
-        "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks"
-      );
-      if (!res.ok) {
-        throw new Error("Someting went wrong.");
-      }
-      const data = await res.json();
-      setFeedbackItems(data.feedbacks);
-    } catch (error) {
-      setErrorMessage("Someting went wrong.");
-    }
-    setIsLoading(false);
-  };
 
   const filterFeedbackItems = useMemo(
     () =>
@@ -99,28 +82,6 @@ export default function FeedbackItemsContextProvider({
   const handleSelectCompany = (company: string) => {
     setSelectedCompany(company);
   };
-
-  useEffect(() => {
-    fetchData();
-    // setIsLoading(true);
-    // fetch(
-    //   "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks"
-    // )
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error("Someting went wrong.");
-    //     }
-    //     return response.json();
-    //   })
-    //   .then((data) => {
-    //     setFeedbackItems(data.feedbacks);
-    //     setIsLoading(false);
-    //   })
-    //   .catch(() => {
-    //     setErrorMessage("Someting went wrong.");
-    //     setIsLoading(false);
-    //   });
-  }, []);
 
   return (
     <FeedbackItemsContext.Provider
