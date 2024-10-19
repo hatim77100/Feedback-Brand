@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import { FeedbackItemsContext } from "../components/contexts/FeedbackItemsContextProvider";
+
 import { TFeedbackItem } from "./types";
+import { FeedbackItemsContext } from "../components/contexts/FeedbackItemsContextProvider";
 
 export function useFeedbackItemsContext() {
   const context = useContext(FeedbackItemsContext);
@@ -20,39 +21,26 @@ export function useFeedbackItems() {
   useEffect(() => {
     const fetchFeedbackItems = async () => {
       setIsLoading(true);
+
       try {
-        const res = await fetch(
+        const response = await fetch(
           "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks"
         );
-        if (!res.ok) {
-          throw new Error("Someting went wrong.");
+
+        if (!response.ok) {
+          throw new Error();
         }
-        const data = await res.json();
+
+        const data = await response.json();
         setFeedbackItems(data.feedbacks);
       } catch (error) {
-        setErrorMessage("Someting went wrong.");
+        setErrorMessage("Something went wrong. Please try again later.");
       }
+
       setIsLoading(false);
     };
+
     fetchFeedbackItems();
-    // setIsLoading(true);
-    // fetch(
-    //   "https://bytegrad.com/course-assets/projects/corpcomment/api/feedbacks"
-    // )
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error("Someting went wrong.");
-    //     }
-    //     return response.json();
-    //   })
-    //   .then((data) => {
-    //     setFeedbackItems(data.feedbacks);
-    //     setIsLoading(false);
-    //   })
-    //   .catch(() => {
-    //     setErrorMessage("Someting went wrong.");
-    //     setIsLoading(false);
-    //   });
   }, []);
 
   return {
